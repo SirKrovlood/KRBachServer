@@ -8,20 +8,24 @@ import socket
 import sys
 from _thread import *
 
-HOST='localhost' # symbolic name meaning all available interfaces
+HOST='' # symbolic name meaning all available interfaces
 PORT= int(input('port to listen: ')) # arbitrary non-privileged port
 numconn=10 # number of simultaneous connections
 sisendandmetepikkus=1024
-global LedSeis
-LedSeis = False
 
 s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 print('...socket created...')
+#s.bind((HOST,PORT))
+#s.bind(("172.17.64.155",PORT))
+
+
 
 try:
 	s.bind((HOST,PORT))
-except socket.error():
-	print(('...bind failed...error code: ' + str(msg[0]) + ', error message: ' + msg[1]))
+	print('...werkin...')
+except:
+
+	print('...bind failed...')
 	sys.exit()
 
 print('...socket bind complete...')
@@ -31,6 +35,7 @@ print('...socket bind complete...')
 s.listen(numconn)
 print('...socket now listening...')
 
+file = open('test.png', 'wb')
 
 
 # function for handling connections...this will be used to create threads
@@ -38,17 +43,20 @@ def clientthread(conn):
 	# sending message to connected client
 	conn.send(('...welcome to the server...type something and hit enter \n').encode()) # send only takes strings
 	# infinite loop so that function do not terminate and thread do not end
+	
 	while True:
 		# receiving from client
                 data=conn.recv(sisendandmetepikkus)
                 print(data)
-                reply='...OK...'+data.decode()
+                #reply='...OK...'+data.decode()
                         
                 if not data:
-                    break
-                        
-                conn.sendall(reply.encode())
+                   break
+                file.write(data)        
+                #conn.sendall(reply.encode())
 	# came out of loop
+	file.close()
+	print("we done here")
 	conn.close()
 		
 # now keep talking with the client
@@ -64,5 +72,6 @@ try:
             start_new_thread(clientthread,(conn,))
 
 except KeyboardInterrupt:
+    file.close()
     s.close()
     sys.exit()

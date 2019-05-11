@@ -36,8 +36,6 @@ print('...socket bind complete...')
 s.listen(numconn)
 print('...socket now listening...')
 
-file = open('test.png', 'wb')
-
 
 # function for handling connections...this will be used to create threads
 def clientthread(conn):
@@ -72,6 +70,6 @@ try:
             start_new_thread(clientthread,(conn,))
 
 except KeyboardInterrupt:
-    file.close()
+
     s.close()
     sys.exit()

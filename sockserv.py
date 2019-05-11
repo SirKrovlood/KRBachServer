@@ -40,24 +40,23 @@ file = open('test.png', 'wb')
 
 # function for handling connections...this will be used to create threads
 def clientthread(conn):
-	# sending message to connected client
-	conn.send(('...welcome to the server...type something and hit enter \n').encode()) # send only takes strings
-	# infinite loop so that function do not terminate and thread do not end
-	
-	while True:
-		# receiving from client
-                data=conn.recv(sisendandmetepikkus)
-                print(data)
-                #reply='...OK...'+data.decode()
-                        
-                if not data:
-                   break
-                file.write(data)        
-                #conn.sendall(reply.encode())
-	# came out of loop
-	file.close()
-	print("we done here")
-	conn.close()
+    
+    conn.send(('...welcome to the server...type something and hit enter \n').encode()) # send only takes strings
+    while True:
+        # receiving from client
+        data=conn.recv(sisendandmetepikkus)
+        print(data)
+        #reply='...OK...'+data.decode()
+        try:
+            if data.decode() == "sha budet":
+                break
+        except:
+            l = 0
+        file.write(data)
+        #conn.sendall(reply.encode())
+    file.close()
+    print('we done here')
+    conn.close()
 		
 # now keep talking with the client
 try:

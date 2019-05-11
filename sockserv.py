@@ -48,7 +48,7 @@ def clientthread(conn):
         print(data)
         #reply='...OK...'+data.decode()
         try:
-            if data.decode() == "sha budet":
+            if not data:
                 break
         except:
             l = 0

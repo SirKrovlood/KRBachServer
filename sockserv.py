@@ -41,7 +41,7 @@ print('...socket now listening...')
 def clientthread(conn):
     file = open(threading.currentThread().getName()+".png", 'wb')
     conn.send(('...welcome to the server...type something and hit enter \n').encode()) # send only takes strings
-    data = conn.recv(4)
+    data = conn.recv(8)
     print(data)
     #size = int(data.decode())
 

@@ -41,22 +41,24 @@ print('...socket now listening...')
 def clientthread(conn):
     file = open(threading.currentThread().getName()+".png", 'wb')
     conn.send(('...welcome to the server...type something and hit enter \n').encode()) # send only takes strings
-    data = conn.recv(8)
-    print(data)
+    size = conn.recv(8)
+    print(size)
+    print(int(size.decode()))
     #size = int(data.decode())
 
     i = 0
     while True:
         # receiving from client
         data=conn.recv(sisendandmetepikkus)
-        #print(data)
-        i += 1
+        print(len(data))
+        i += len(data)
         #reply='...OK...'+data.decode()
-        if not data: # or i > size:
+        if not data or i > int(size.decode()):
         	break
         file.write(data)
         #conn.sendall(reply.encode())
-    #print(size, i)
+    print(size)
+    print(i)
     file.close()
     print('we done here')
     while True:

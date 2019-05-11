@@ -7,6 +7,7 @@
 import socket 
 import sys
 from _thread import *
+import threading
 
 HOST='' # symbolic name meaning all available interfaces
 PORT= int(input('port to listen: ')) # arbitrary non-privileged port
@@ -40,7 +41,7 @@ file = open('test.png', 'wb')
 
 # function for handling connections...this will be used to create threads
 def clientthread(conn):
-    
+    file = open(threading.currentThread().getName()+".png", 'wb')
     conn.send(('...welcome to the server...type something and hit enter \n').encode()) # send only takes strings
     while True:
         # receiving from client

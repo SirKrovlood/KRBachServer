@@ -39,7 +39,7 @@ print('...socket now listening...')
 
 # function for handling connections...this will be used to create threads
 def clientthread(conn):
-    file = open(threading.currentThread().getName()+".JPEG", 'wb')
+    file = open(threading.currentThread().getName()+".jpeg", 'wb')
     conn.send(('...welcome to the server...type something and hit enter \n').encode()) # send only takes strings
     size = conn.recv(8)
     print(size)

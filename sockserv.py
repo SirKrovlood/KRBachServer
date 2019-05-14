@@ -10,7 +10,8 @@ from _thread import *
 import threading
 
 HOST='' # symbolic name meaning all available interfaces
-PORT= int(input('port to listen: ')) # arbitrary non-privileged port
+PORT=8888
+#PORT= int(input('port to listen: ')) # arbitrary non-privileged port
 numconn=10 # number of simultaneous connections
 sisendandmetepikkus=1024
 

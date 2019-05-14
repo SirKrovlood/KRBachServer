@@ -23,7 +23,6 @@ print('...socket created...')
 
 try:
 	s.bind((HOST,PORT))
-	print('...werkin...')
 except:
 
 	print('...bind failed...')
@@ -39,31 +38,32 @@ print('...socket now listening...')
 
 # function for handling connections...this will be used to create threads
 def clientthread(conn):
-    file = open(threading.currentThread().getName()+".jpeg", 'wb')
+    file = open(threading.currentThread().getName()+".png", 'wb')
     conn.send(('...welcome to the server...type something and hit enter \n').encode()) # send only takes strings
     size = conn.recv(10)
     print(size)
     print(int(size.decode()))
     #size = int(data.decode())
-
-    i = 0
-    while True:
-        if i >= int(size.decode()):
-             break
-        # receiving from client
-        data=conn.recv(1)
-        if not data:
-             break
-        #print(data)
-        i += len(data)
-        #reply='...OK...'+data.decode()
-        file.write(data)
-        #conn.sendall(reply.encode())
-    print(size)
-    print(i)
-    file.close()
-    print('we done here')
-    '''
+    try:
+        i = 0
+        while True:
+             if i >= int(size.decode()):
+                  break
+             # receiving from client
+             data=conn.recv(1)
+             if not data:
+                 break
+             #print(data)
+             i += len(data)
+             #reply='...OK...'+data.decode()
+             file.write(data)
+             #conn.sendall(reply.encode())
+    finally:
+        print(size)
+        print(i)
+        file.close()
+        print('we done here')
+    
     while True:
         # receiving from client
         data=conn.recv(sisendandmetepikkus)
@@ -71,7 +71,7 @@ def clientthread(conn):
         #reply='...OK...'+data.decode()
         if not data:
                 break
-    '''
+    
     conn.close()
 		
 # now keep talking with the client

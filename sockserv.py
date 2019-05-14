@@ -43,12 +43,10 @@ def clientthread(conn):
           file = open(threading.currentThread().getName()+".png", 'wb')
           conn.send(('...welcome to the server...type something and hit enter \n').encode()) # send only takes strings
           size = conn.recv(10)
-          print(size)
-          print(int(size.decode()))
-          #size = int(data.decode())
+          size = int((size.split(b'\0', -1)[-1]).decode())
           i = 0
           while True:
-                 if i >= int(size.decode()):
+                 if i >= size:
                        break
                  # receiving from client
                  data=conn.recv(1)
@@ -58,11 +56,10 @@ def clientthread(conn):
                  i += len(data)
                  #reply='...OK...'+data.decode()
                  file.write(data)
+                 #print(i)
                  #conn.sendall(reply.encode())
-       print('we done here')
-       print(size)
-       print(i)
-       file.close()
+          print('we done here')
+          file.close()
     finally:
         conn.close()
         file.close()

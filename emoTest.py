@@ -8,7 +8,7 @@ target_emotions =  [['anger', 'fear', 'calm', 'surprise'],['happiness', 'surpris
 image = cv2.imread('Dummy-11.png', 0)
 resized_image = cv2.resize(image, (48,48), interpolation=cv2.INTER_LINEAR)
 final_image = np.array([np.array([resized_image]).reshape([48,48]+[1])])
-
+cv2.imwrite("ohh.png", final_image)
 emo_score = {'anger':0, 'fear':0, 'calm':0, 'sadness':0, 'happiness':0, 'surprise':0, 'disgust':0}
 emo_coeff = {'anger':6, 'fear':4, 'calm':4, 'sadness':1, 'happiness':3, 'surprise':5, 'disgust':4}
 for t in target_emotions:

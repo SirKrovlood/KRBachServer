@@ -5,7 +5,7 @@ import numpy as np
 target_emotions =  [['anger', 'fear', 'calm', 'surprise'],['happiness', 'surprise', 'disgust'],['anger', 'fear', 'surprise'],['anger', 'fear', 'calm'],['anger', 'calm', 'happiness'],
 ['anger', 'fear', 'disgust'],['calm', 'surprise', 'disgust'],[ 'sadness', 'surprise', 'disgust'],['anger', 'happiness']]
 
-image = cv2.imread('Dummy-11.png', 0)
+image = cv2.imread('Dummy-120.png', 0)
 resized_image = cv2.resize(image, (48,48), interpolation=cv2.INTER_LINEAR)
 final_image = np.array([np.array([resized_image]).reshape([48,48]+[1])])
 cv2.imwrite("ohh.png", final_image)

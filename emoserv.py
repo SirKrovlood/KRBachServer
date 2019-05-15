@@ -12,8 +12,6 @@ from EmoPy.src.fermodel import FERModel
 import numpy as np
 import cv2
 from copy import deepcopy
-from PIL import Image
-from io import StringIO
 
 
 HOST='' # symbolic name meaning all available interfaces
@@ -21,6 +19,13 @@ PORT=8888
 #PORT= int(input('port to listen: ')) # arbitrary non-privileged port
 numconn=10 # number of simultaneous connections
 sisendandmetepikkus=1024
+
+target_emotions =  [['anger', 'fear', 'calm', 'surprise'],['happiness', 'surprise', 'disgust'],
+['anger', 'fear', 'surprise'],['anger', 'fear', 'calm'],['anger', 'calm', 'happiness'],
+['anger', 'fear', 'disgust'],['calm', 'surprise', 'disgust'],[ 'sadness', 'surprise', 'disgust'],
+['anger', 'happiness']]
+
+emo_coeff = {'anger':6, 'fear':4, 'calm':4, 'sadness':1, 'happiness':3, 'surprise':5, 'disgust':4}
 
 s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 print('...socket created...')
@@ -44,13 +49,26 @@ s.listen(numconn)
 print('...socket now listening...')
 
 def emothread(conn, byteIm, name):
-    #image = Image.open(StringIO(str(bytes(byteIm))));
-    #image = np.array(image)
-    #image = cv.fromarray(image)
-    
     narray =  np.fromstring(bytes(byteIm), dtype='uint8')
     image = cv2.imdecode(narray, 0)
-    cv2.imwrite(name, image)
+    #cv2.imwrite(name, image)
+    resized_image = cv2.resize(image, (48,48), interpolation=cv2.INTER_LINEAR)
+    final_image = np.array([np.array([resized_image]).reshape([48,48]+[1])])
+    cv2.imwrite(name, final_image)
+    emo_score = {'anger':0, 'fear':0, 'calm':0, 'sadness':0, 'happiness':0, 'surprise':0, 'disgust':0}
+    for t in target_emotions:
+        fmdl = FERModel(t, verbose=False)
+        pred = fmdl.model.predict(final_image)
+        normPred = [x/sum(pred[0]) for x in pred[0]]
+        for i in range(len(normPred)):
+                emo_score[t[i]] += normPred[i]/emo_coeff[t[i]]
+        fmdl._print_prediction(pred[0])
+    for i in emo_score:
+        conn.sendall(str(i)+': ' + str(emo_score[i]))
+    conn.sendall('-----------------')
+
+
+
 # function for handling connections...this will be used to create threads
 def clientthread(conn):
     conn.send(('...welcome to the server...type something and hit enter \n').encode())

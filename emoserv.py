@@ -17,7 +17,7 @@ from copy import deepcopy
 HOST='' # symbolic name meaning all available interfaces
 PORT=8888
 #PORT= int(input('port to listen: ')) # arbitrary non-privileged port
-numconn=10 # number of simultaneous connections
+numconn=1 # number of simultaneous connections
 sisendandmetepikkus=1024
 
 target_emotions =  [['anger', 'fear', 'calm', 'surprise'],['happiness', 'surprise', 'disgust'],
@@ -48,13 +48,12 @@ print('...socket bind complete...')
 s.listen(numconn)
 print('...socket now listening...')
 
-def emothread(conn, byteIm, name):
+def emolyze(conn, byteIm):
     narray =  np.fromstring(bytes(byteIm), dtype='uint8')
     image = cv2.imdecode(narray, 0)
     #cv2.imwrite(name, image)
     resized_image = cv2.resize(image, (48,48), interpolation=cv2.INTER_LINEAR)
     final_image = np.array([np.array([resized_image]).reshape([48,48]+[1])])
-    cv2.imwrite(name, final_image)
     emo_score = {'anger':0, 'fear':0, 'calm':0, 'sadness':0, 'happiness':0, 'surprise':0, 'disgust':0}
     for t in target_emotions:
         fmdl = FERModel(t, verbose=False)
@@ -62,16 +61,19 @@ def emothread(conn, byteIm, name):
         normPred = [x/sum(pred[0]) for x in pred[0]]
         for i in range(len(normPred)):
                 emo_score[t[i]] += normPred[i]/emo_coeff[t[i]]
-        fmdl._print_prediction(pred[0])
-    for i in emo_score:
-        conn.sendall(str(i)+': ' + str(emo_score[i]))
-    conn.sendall('-----------------')
-
+        #fmdl._print_prediction(pred[0])
+    
+    
+    #for i in emo_score:
+    #   conn.sendall(( str(i) + ': ' + str(emo_score[i]) + "\n").encode())
+    #conn.sendall('-----------------\n'.encode())
+    likelyIX = np.argmax(list(emo_score.values()))
+    conn.sendall(str(likelyIX).encode())
 
 
 # function for handling connections...this will be used to create threads
 def clientthread(conn):
-    conn.send(('...welcome to the server...type something and hit enter \n').encode())
+    #conn.send(('...welcome to the server...type something and hit enter \n').encode())
     try:
        l = 0
        while True:
@@ -98,7 +100,7 @@ def clientthread(conn):
                  #print(i)
                  #conn.sendall(reply.encode())
           print('we done here')
-          start_new_thread(emothread, (conn, deepcopy(bImage), threading.currentThread().getName()+str(l)+"r.png",))
+          emolyze(conn, deepcopy(bImage))
           #file.close()
     finally:
         conn.close()
